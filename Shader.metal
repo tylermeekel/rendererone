@@ -63,13 +63,16 @@ vertex VertexOut vertex_main(uint vertex_id [[vertex_id]],
 
         float2 direction = normalize(float2(sw.direction));
 
-        pos.y += amplitude * pow(eulers, sin(dot(direction, pos.xz + float2(prevtangent, prevbitangent)) * frequency + params.time * phase));
+        float x = dot(direction, pos.xz + float2(prevtangent, prevbitangent)) * frequency + params.time * phase;
+        float part_dx = dot(direction, pos.xz) * frequency + params.time * phase;
+
+        pos.y += amplitude * pow(eulers, sin(x));
         prevtangent = frequency * amplitude * direction.x * 
-            pow(eulers, amplitude * sin(dot(direction, pos.xz + float2(prevtangent, prevbitangent)) * frequency + params.time * phase) - 1) *
-            cos(dot(direction, pos.xz) * frequency + params.time * phase);
+            pow(eulers, amplitude * sin(x) - 1) *
+            cos(part_dx);
         prevbitangent = frequency * amplitude * direction.y * 
-            pow(eulers, amplitude * sin(dot(direction, pos.xz + float2(prevtangent, prevbitangent)) * frequency + params.time * phase) - 1) *
-            cos(dot(direction, pos.xz) * frequency + params.time * phase);
+            pow(eulers, amplitude * sin(x) - 1) *
+            cos(part_dx);
 
         tangent += prevtangent;
         bitangent += prevbitangent;
@@ -94,7 +97,7 @@ vertex VertexOut vertex_main(uint vertex_id [[vertex_id]],
 
 float4 fog(float4 position, float4 color) {
     float distance = position.z / position.w;
-    float density = 0.008;
+    float density = 0.006;
     float fog = 1.0 - clamp(pow(exp2(-density * distance), 2), 0.0, 1.0);
     float4 fogColor = float4(1, 0.5, 0.2, 1.0);
     color = mix(color, fogColor, fog);

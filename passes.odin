@@ -61,7 +61,7 @@ main_render_pass_proc :: proc(renderer: ^Renderer) {
 
     color_attachment := pass->colorAttachments()->object(0)
     assert(color_attachment != nil)
-    color_attachment->setClearColor(MTL.ClearColor{1.0, 1.0, 1.0, 1.0})
+    color_attachment->setClearColor(MTL.ClearColor{1.0, 0.81, 0.7, 1.0})
     color_attachment->setLoadAction(.Clear)
     color_attachment->setStoreAction(.Store)
     color_attachment->setTexture(renderer.window_drawable->texture())
